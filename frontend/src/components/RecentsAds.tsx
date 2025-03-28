@@ -1,8 +1,12 @@
-import AdCard from "./AdCard";
-import { Ad } from "../../interfaces/entities";
+// import AdCard from "@/src/components/AdCard"; NOK
+import AdCard from "@/components/AdCard";
+
+//import AdCard from "./AdCard";
+import { Ad } from "@/interfaces/entities";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useSearchParams } from "react-router";
+import { toast } from "react-toastify";
 
 const RecentsAds = () => {
   const [searchParams] = useSearchParams();
@@ -11,6 +15,7 @@ const RecentsAds = () => {
   const [total, setTotal] = useState(0);
   const [ads, setAds] = useState<Ad[]>([]);
 
+  // Récupérer les annonces
   const fetchAds = async () => {
     try {
       const result = await axios.get(
@@ -25,6 +30,19 @@ const RecentsAds = () => {
   useEffect(() => {
     fetchAds();
   }, [categoryId]);
+
+  // Supprimer une annonce
+  const deleteAd = async (id: number) => {
+    try {
+      await axios.delete(`${import.meta.env.VITE_API_URL}/ads/${id}`);
+      toast.success("Annonce supprimée avec succès!");
+      //navigate("/");
+      fetchAds();
+    } catch (error) {
+      console.error(error);
+      toast.error("Erreur lors de la suppression de l'annonce");
+    }
+  };
 
   return (
     <>
@@ -45,6 +63,10 @@ const RecentsAds = () => {
               onClick={() => setTotal(total + ad.price)}
             >
               Add price to total
+            </button>
+
+            <button className="button" onClick={() => deleteAd(ad.id)}>
+              Supprimer l'annonce
             </button>
           </div>
         ))}

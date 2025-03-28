@@ -1,8 +1,16 @@
+GET http://localhost:3000/ads
+
+###
+
 GET http://localhost:3000/ads?category=1
 
 ###
 
-GET http://localhost:3000/ads
+GET http://localhost:3000/ads?search=oi
+
+###
+
+GET http://localhost:3000/ads?search=oi?category=4
 
 ###
 
@@ -51,4 +59,3 @@ Content-Type: application/json
 ###
 
 DELETE http://localhost:3000/ads/3
-

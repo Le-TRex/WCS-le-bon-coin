@@ -39,10 +39,19 @@ CREATE TABLE ad_tag (
 
 INSERT INTO category (id, label) 
 	VALUES 
-		(1, 'Autre'), 
-		(2, 'Vehicule'), 
-		(3, 'Multimédia'), 
-		(4, 'Meuble');
+		(1, 'Ameublement'), 
+		(2, 'Électroménager'), 
+		(3, 'Photographie'), 
+		(4, 'Informatique'),
+		(5, 'Téléphonie'),
+		(6, 'Bicyclettes'),
+		(7, 'Véhicules'),
+		(8, 'Sport'),
+		(9, 'Habillement'),
+		(10, 'Bébé'),
+		(11, 'Outillage'),
+		(12, 'Services'),
+		(13, 'Vacances');
 
 INSERT INTO tag (id, label) 
     VALUES 

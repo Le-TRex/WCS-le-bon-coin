@@ -1,10 +1,12 @@
 import { Link } from "react-router";
-import { Category } from "../../interfaces/entities";
+// import { Category } from "@/interfaces/entities";
+import { Category } from "../interfaces/entities";
 import { useEffect, useState } from "react";
 import axios from "axios";
 
 const Header = () => {
   const [categories, setCategories] = useState<Category[]>([]);
+  const [searchInput, setSearchInput] = useState("");
 
   const fetchCategories = async () => {
     try {
@@ -30,9 +32,21 @@ const Header = () => {
             <span className="desktop-long-label">THE GOOD CORNER</span>
           </Link>
         </h1>
-        <form className="text-field-with-button">
-          <input className="text-field main-search-field" type="search" />
-          <button className="button button-primary">
+        <form
+          className="text-field-with-button"
+          onSubmit={(e) => {
+            e.preventDefault();
+            window.location.href = `/search?query=${searchInput}`;
+          }}
+        >
+          <input
+            className="text-field main-search-field"
+            type="search"
+            placeholder="Rechercher une annonce"
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
+          />
+          <button className="button button-primary" type="submit">
             <svg
               aria-hidden="true"
               width="16"

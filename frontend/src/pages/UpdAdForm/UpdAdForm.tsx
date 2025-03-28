@@ -4,7 +4,7 @@ import { Tag } from "../../interfaces/entities";
 import axios from "axios";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
-import "./NewAdForm.scss";
+import { useParams } from "react-router";
 
 type Inputs = {
   title: string;
@@ -17,9 +17,47 @@ type Inputs = {
   tags: string[];
 };
 
-const NewAdForm = () => {
+interface AdDetailsType {
+  id: number;
+  title: string;
+  description: string;
+  author: string;
+  price: number;
+  pictureUrl: string;
+  city: string;
+  createdAt: Date;
+  category: {
+    id: number;
+    label: string;
+  };
+  tags: {
+    id: number;
+    label: string;
+  }[];
+}
+
+const UpdAdForm = () => {
+  const { id } = useParams();
+  // Annonce à modifier
+  //const [adData, setAdData] = useState<AdDetailsType | null>(null);
+  const [adData, setAdData] = useState<AdDetailsType>();
+
+  // Toutes les catégories
   const [categories, setCategories] = useState<Category[]>([]);
+
+  // Tous les tags
   const [tags, setTags] = useState<Tag[]>([]);
+
+  const fetchAd = async () => {
+    try {
+      const result = await axios.get(
+        `${import.meta.env.VITE_API_URL}/ads/${id}`
+      );
+      setAdData(result.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const fetchTags = async () => {
     try {
@@ -44,9 +82,10 @@ const NewAdForm = () => {
   };
 
   useEffect(() => {
+    fetchAd();
     fetchCategories();
     fetchTags();
-  }, []);
+  }, [id]);
 
   const {
     register,
@@ -61,67 +100,84 @@ const NewAdForm = () => {
         tags: data.tags.map((tagId) => ({ id: tagId })),
       };
 
-      await axios.post(`${import.meta.env.VITE_API_URL}/ads`, dataWithTags);
-      toast.success("Annonce créée avec succès!");
+      await axios.put(
+        `${import.meta.env.VITE_API_URL}/ads/${id}`,
+        dataWithTags
+      );
+      toast.success("Annonce modifiée avec succès!");
     } catch (error) {
       console.error(error);
-      toast.error("Une erreur est survenue lors de la création de l'annonce");
+      toast.error(
+        "Une erreur est survenue lors de la modification de l'annonce"
+      );
     }
   };
 
+  // sera utilie pour discriminer création/modification annonce
+  if (adData === undefined) {
+    return <p>Loading ... </p>;
+  }
+
   return (
     <div className="NewAdForm">
-      <h2>Création d'une nouvelle annonce</h2>
+      <h2>Modification d'une nouvelle annonce</h2>
 
       <form onSubmit={handleSubmit(onSubmit)}>
         <input
           className="text-field"
           type="text"
-          placeholder="Titre de l'anonce"
+          defaultValue={adData?.title}
           {...register("title", { required: true })}
         />
         {errors.title && <span>This field is required</span>}
         <input
           className="text-field"
           type="text"
-          placeholder="Description"
+          defaultValue={adData?.description}
           {...register("description", { required: true })}
         />
         {errors.description && <span>This field is required</span>}
         <input
           className="text-field"
           type="text"
-          placeholder="Auteur"
+          defaultValue={adData?.author}
           {...register("author", { required: true })}
         />
         {errors.author && <span>This field is required</span>}
         <input
           className="text-field"
           type="number"
-          placeholder="Prix"
+          // placeholder à traiter
+          //placeholder="0"
+          defaultValue={adData?.price}
           {...register("price", { required: true })}
         />
         {errors.price && <span>This field is required</span>}
         <input
           className="text-field"
           type="text"
-          placeholder="Lien vers une image"
+          defaultValue={adData?.pictureUrl}
           {...register("pictureUrl", { required: true })}
         />
         {errors.pictureUrl && <span>This field is required</span>}
         <input
           className="text-field"
           type="text"
-          placeholder="Ville"
+          defaultValue={adData?.city}
           {...register("city", { required: true })}
         />
         {errors.city && <span>This field is required</span>}
+
         <select
           {...register("category", { required: true })}
           className="text-field"
         >
           {categories.map((category) => (
-            <option key={category.id} value={category.id}>
+            <option
+              key={category.id}
+              value={category.id}
+              selected={adData?.category.id === category.id}
+            >
               {category.label}
             </option>
           ))}
@@ -129,9 +185,20 @@ const NewAdForm = () => {
         </select>
         {errors.category && <span>This field is required</span>}
 
+        <br />
+
         {tags.map((tag) => (
           <label key={tag.id}>
-            <input type="checkbox" value={tag.id} {...register(`tags`)} />
+            <input
+              //defaultChecked={ad.tags.some((adTag) => adTag.id === tag.id)}
+              defaultChecked={
+                adData.tags.find((currTag) => currTag.id === tag.id) !==
+                undefined
+              }
+              type="checkbox"
+              value={tag.id}
+              {...register(`tags`)}
+            />
             {tag.label}
           </label>
         ))}
@@ -144,4 +211,4 @@ const NewAdForm = () => {
   );
 };
 
-export default NewAdForm;
+export default UpdAdForm;

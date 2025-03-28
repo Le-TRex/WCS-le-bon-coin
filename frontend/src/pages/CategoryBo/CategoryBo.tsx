@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Category } from "../../../interfaces/entities";
+import { Category } from "../../interfaces/entities";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useForm } from "react-hook-form";

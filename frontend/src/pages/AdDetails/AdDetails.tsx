@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router";
+import { useParams, useNavigate, Link } from "react-router";
 import { toast } from "react-toastify";
 
 interface AdDetailsType {
@@ -105,6 +105,10 @@ const AdDetails = () => {
           <button className="button" onClick={() => deleteAd(adData.id)}>
             Supprimer l'annonce
           </button>
+
+          <Link to={`${import.meta.env.VITE_FRONT_URL}/ad/upd/${adData.id}`}>
+            <button className="button">Modifier l'annonce</button>
+          </Link>
         </div>
       </section>
     </>

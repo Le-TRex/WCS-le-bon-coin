@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { Ad } from "../entities/Ad";
+import { FindOperator, Like } from "typeorm";
 
 export const getAll = async (
   req: Request,
@@ -7,15 +8,21 @@ export const getAll = async (
   next: NextFunction
 ) => {
   const categoryId = req.query.category;
-  let where = {};
-  if (categoryId !== "null") {
-    where = {
-      category: { id: parseInt(categoryId as string) },
-    };
+  const search = req.query.search;
+  const whereOptions: {
+    category?: { id: number };
+    title?: FindOperator<string>;
+  } = {};
+
+  if (categoryId && categoryId !== "null") {
+    whereOptions.category = { id: parseInt(categoryId as string) };
+  }
+  if (search && search !== "null") {
+    whereOptions.title = Like(`%${search}%`);
   }
   try {
     const ads = await Ad.find({
-      where,
+      where: whereOptions,
       relations: {
         category: true,
         tags: true,

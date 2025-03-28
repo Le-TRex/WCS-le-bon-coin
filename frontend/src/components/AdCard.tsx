@@ -1,5 +1,7 @@
 import { Link } from "react-router";
-import { Ad } from "../../interfaces/entities";
+// import { Ad } from "@/interfaces/entities";
+import { Ad } from "../interfaces/entities";
+//import { Ad } from "@interfaces/entities";
 
 type AdCardProps = Omit<Ad, "id">;
 
